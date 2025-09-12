@@ -1,7 +1,9 @@
 <?php
 /**
  * Data Import Script for DogInvoice WordPress Theme
- * Run this script to import sample data
+ * 
+ * This script imports all content from the original Next.js application
+ * into WordPress using ACF fields.
  */
 
 // Prevent direct access
@@ -9,471 +11,478 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function doginvoice_import_sample_data() {
-    // Check if user has permission
-    if (!current_user_can('manage_options')) {
-        wp_die('You do not have permission to run this script.');
-    }
-    
-    echo '<h1>Importing DogInvoice Sample Data...</h1>';
-    
-    // Import Hero Section
-    import_hero_data();
-    
-    // Import Process Steps
-    import_process_steps();
-    
-    // Import Features
-    import_features();
-    
-    // Import Integrations
-    import_integrations();
-    
-    // Import Benefits
-    import_benefits();
-    
-    // Import FAQ
-    import_faq();
-    
-    // Import Pricing Plans
-    import_pricing_plans();
-    
-    echo '<h2>✅ Sample data imported successfully!</h2>';
-    echo '<p><a href="' . admin_url() . '">Go to WordPress Admin</a></p>';
+// Check if we should run the import
+if (!isset($_GET['run_import']) || $_GET['run_import'] !== 'true') {
+    echo '<h1>DogInvoice Data Import</h1>';
+    echo '<p>To run the import, add <code>?run_import=true</code> to the URL.</p>';
+    echo '<p><a href="?run_import=true" class="button button-primary">Run Import</a></p>';
+    exit;
 }
 
-function import_hero_data() {
-    echo '<h3>Importing Hero Section...</h3>';
+// Check if ACF is active
+if (!function_exists('acf_add_local_field_group')) {
+    echo '<h1>Error</h1>';
+    echo '<p>Advanced Custom Fields plugin is not active. Please install and activate ACF first.</p>';
+    exit;
+}
+
+echo '<h1>DogInvoice Data Import</h1>';
+echo '<p>Starting import process...</p>';
+
+// Import Hero Section Data
+echo '<h2>Importing Hero Section...</h2>';
+$hero_post_id = wp_insert_post(array(
+    'post_title' => 'Hero Section',
+    'post_content' => '',
+    'post_status' => 'publish',
+    'post_type' => 'dog_hero',
+    'post_author' => 1,
+));
+
+if ($hero_post_id) {
+    // Hero fields
+    update_field('hero_title', 'Robisz zdjęcie faktury, a reszta dzieje się automatycznie', $hero_post_id);
+    update_field('hero_subtitle', 'DogInvoice automatycznie organizuje Twoje dokumenty, eliminuje chaos administracyjny i pozwala Ci skupić się na tym, co naprawdę ważne.', $hero_post_id);
+    update_field('hero_video_url', '/videos/doginvoice_hero.mp4', $hero_post_id);
+    update_field('hero_video_poster', '/doginvoice_hero_frame.png', $hero_post_id);
+    update_field('hero_cta_primary_text', 'Wybierz swój plan', $hero_post_id);
+    update_field('hero_cta_primary_url', '#pricing', $hero_post_id);
+    update_field('hero_cta_secondary_text', 'Przetestuj za darmo', $hero_post_id);
+    update_field('hero_cta_secondary_url', '/trial', $hero_post_id);
     
-    $hero_data = array(
-        'post_title' => 'Hero Section',
+    // Animated Numbers
+    $animated_numbers = array(
+        array(
+            'value' => 50000,
+            'suffix' => '+',
+            'title' => 'Przetworzonych faktur',
+            'description' => 'przez naszych klientów',
+            'color' => 'text-primary'
+        ),
+        array(
+            'value' => 15,
+            'suffix' => 'h',
+            'title' => 'Oszczędności tygodniowo',
+            'description' => 'średnio na każdego użytkownika',
+            'color' => 'text-orange-500'
+        ),
+        array(
+            'value' => 99,
+            'suffix' => '%',
+            'title' => 'Dokładność AI',
+            'description' => 'w rozpoznawaniu danych z faktur',
+            'color' => 'text-primary'
+        )
+    );
+    update_field('animated_numbers', $animated_numbers, $hero_post_id);
+    
+    // Trusted By
+    update_field('trusted_by_title', 'Z DogInvoice już korzystają', $hero_post_id);
+    $trusted_by_logos = array(
+        array(
+            'name' => 'Dogtronic',
+            'url' => 'https://dogtronic.io/',
+            'image' => '/assets/dog_logo.svg',
+            'height' => 20
+        ),
+        array(
+            'name' => 'Kryptobot',
+            'url' => 'https://kryptobot.net/',
+            'image' => '/assets/kryptobot_logo.svg',
+            'height' => 35
+        ),
+        array(
+            'name' => 'Estacluster',
+            'url' => 'https://estacluster.com/',
+            'image' => '/assets/esta_logo.svg',
+            'height' => 30
+        ),
+        array(
+            'name' => 'Doza',
+            'url' => 'https://doza.life/',
+            'image' => '/assets/doza_logo.svg',
+            'height' => 35
+        )
+    );
+    update_field('trusted_by_logos', $trusted_by_logos, $hero_post_id);
+    
+    // Trial Section
+    update_field('trial_title', 'Jak działa darmowy plan Starter?', $hero_post_id);
+    update_field('trial_subtitle', 'Rozpocznij bez ryzyka i przekonaj się, jak DogInvoice zmieni Twój sposób pracy.', $hero_post_id);
+    $trial_steps = array(
+        array(
+            'icon' => 'file-text',
+            'title' => 'Wypełniasz formularz',
+            'description' => 'Prosty formularz rejestracyjny - zajmuje tylko 1 minutę.'
+        ),
+        array(
+            'icon' => 'zap',
+            'title' => 'Otrzymujesz dostęp',
+            'description' => '10 darmowych dokumentów do przetworzenia miesięcznie - bez zobowiązań.'
+        ),
+        array(
+            'icon' => 'calendar',
+            'title' => 'Umawiasz prezentację',
+            'description' => 'Darmowa prezentacja produktu z wyjaśnieniem wszystkich funkcjonalności.'
+        )
+    );
+    update_field('trial_steps', $trial_steps, $hero_post_id);
+    
+    // CTA Section
+    update_field('cta_title', 'Zacznij już dziś', $hero_post_id);
+    update_field('cta_subtitle', 'Dołącz do firm, które oszczędzają 15 godzin tygodniowo dzięki automatyzacji.', $hero_post_id);
+    update_field('cta_primary_text', 'Wybierz swój plan', $hero_post_id);
+    update_field('cta_primary_url', '#pricing', $hero_post_id);
+    update_field('cta_secondary_text', 'Przetestuj za darmo', $hero_post_id);
+    update_field('cta_secondary_url', '/trial', $hero_post_id);
+    
+    echo '<p>✓ Hero section imported successfully</p>';
+} else {
+    echo '<p>✗ Failed to import hero section</p>';
+}
+
+// Import Features
+echo '<h2>Importing Features...</h2>';
+$features_data = array(
+    array(
+        'title' => 'Automatyzacja i integracja z AI',
+        'description' => 'Faktury przychodzące mailem lub przez dedykowany portal są automatycznie przetwarzane przez algorytm AI, który między innymi wykrywa kategorię wydatku.',
+        'video_url' => '/videos/aiautomation.mp4',
+        'poster' => '/cover_1.png',
+        'icon' => '🤖'
+    ),
+    array(
+        'title' => 'Obsługa trudnych przypadków',
+        'description' => 'Jeśli zdjęcie faktury jest nieczytelne lub niewyraźne, automatycznie korzystamy z autorskiej technologii AI OCR, aby zapewnić poprawne odczytanie wszystkich informacji.',
+        'video_url' => '/videos/realtime.mp4',
+        'poster' => '/cover_2.png',
+        'icon' => '📈'
+    ),
+    array(
+        'title' => 'Analiza finansowa',
+        'description' => 'Na bieżąco monitoruj koszty i przychody dzięki intuicyjnym zestawieniom i wykresom. Komplet dokumentów można później łatwo wysłać do księgowej.',
+        'video_url' => '/videos/integration.mp4',
+        'poster' => '/cover_3.png',
+        'icon' => '⚙️'
+    )
+);
+
+foreach ($features_data as $index => $feature) {
+    $post_id = wp_insert_post(array(
+        'post_title' => $feature['title'],
         'post_content' => '',
         'post_status' => 'publish',
-        'post_type' => 'doginvoice_hero',
-        'post_author' => 1
-    );
+        'post_type' => 'dog_features',
+        'post_author' => 1,
+        'menu_order' => $index + 1,
+    ));
     
-    $hero_id = wp_insert_post($hero_data);
-    
-    if ($hero_id) {
-        update_field('hero_title', 'Robisz zdjęcie faktury, a reszta dzieje się automatycznie', $hero_id);
-        update_field('hero_subtitle', 'DogInvoice automatycznie organizuje Twoje dokumenty, eliminuje chaos administracyjny i pozwala Ci skupić się na tym, co naprawdę ważne.', $hero_id);
-        update_field('hero_description', 'Zaawansowany system AI do automatycznego zarządzania fakturami i dokumentami finansowymi.', $hero_id);
-        update_field('hero_video_url', '/videos/doginvoice_hero.mp4', $hero_id);
-        update_field('hero_video_poster', '/doginvoice_hero_frame.png', $hero_id);
-        update_field('hero_cta_primary_text', 'Wybierz swój plan', $hero_id);
-        update_field('hero_cta_primary_url', '#pricing', $hero_id);
-        update_field('hero_cta_secondary_text', 'Przetestuj za darmo', $hero_id);
-        update_field('hero_cta_secondary_url', '/trial', $hero_id);
-        
-        echo '<p>✅ Hero section imported (ID: ' . $hero_id . ')</p>';
+    if ($post_id) {
+        update_field('feature_title', $feature['title'], $post_id);
+        update_field('feature_description', $feature['description'], $post_id);
+        update_field('feature_video_url', $feature['video_url'], $post_id);
+        update_field('feature_poster', $feature['poster'], $post_id);
+        update_field('feature_icon', $feature['icon'], $post_id);
+        echo '<p>✓ Feature "' . $feature['title'] . '" imported</p>';
     } else {
-        echo '<p>❌ Failed to import hero section</p>';
+        echo '<p>✗ Failed to import feature "' . $feature['title'] . '"</p>';
     }
 }
 
-function import_process_steps() {
-    echo '<h3>Importing Process Steps...</h3>';
+// Import Benefits
+echo '<h2>Importing Benefits...</h2>';
+$benefits_data = array(
+    array(
+        'title' => 'Pełna automatyzacja',
+        'description' => 'Faktury przychodzące mailem lub przez formularz są automatycznie przetwarzane przez specjalny algorytm AI.',
+        'highlight' => 'AI-powered',
+        'icon' => '🤖'
+    ),
+    array(
+        'title' => 'Obsługa trudnych przypadków',
+        'description' => 'Nieczytelne faktury są automatycznie przekazywane do systemu OCR w celu poprawnego odczytania danych.',
+        'highlight' => 'Smart OCR',
+        'icon' => '📊'
+    ),
+    array(
+        'title' => 'Automatyczna konwersja walut',
+        'description' => 'System przelicza faktury w walutach obcych według aktualnych kursów.',
+        'highlight' => 'Multi-currency',
+        'icon' => '💰'
+    ),
+    array(
+        'title' => 'Inteligentna archiwizacja',
+        'description' => 'Faktury są zapisywane na Dysku Google użytkownika w uporządkowanej strukturze folderów gotowych do udostępnienia księgowej.',
+        'highlight' => 'Google Drive',
+        'icon' => '📁'
+    ),
+    array(
+        'title' => 'Bilans w czasie rzeczywistym',
+        'description' => 'Wszystkie dane są natychmiast widoczne w dashboardzie, dając Ci pełny wgląd w koszty i przychody.',
+        'highlight' => 'Real-time',
+        'icon' => '📈'
+    ),
+    array(
+        'title' => 'Automatyczna kategoryzacja',
+        'description' => 'Automatyczne rozpoznawanie oraz przypisywanie odpowiednich kategorii kosztów i przychodów.',
+        'highlight' => 'Auto-categorize',
+        'icon' => '🏷️'
+    )
+);
+
+foreach ($benefits_data as $index => $benefit) {
+    $post_id = wp_insert_post(array(
+        'post_title' => $benefit['title'],
+        'post_content' => '',
+        'post_status' => 'publish',
+        'post_type' => 'dog_benefits',
+        'post_author' => 1,
+        'menu_order' => $index + 1,
+    ));
     
-    $steps_data = array(
-        array(
-            'title' => 'Wielokanałowy odbiór',
-            'content' => 'Wysyłaj faktury przez email, SMS, WhatsApp lub bezpośrednio z aplikacji mobilnej. System automatycznie wykrywa i pobiera dokumenty z różnych źródeł.',
-            'number' => '01',
-            'icon' => 'upload',
-            'position_x' => 20,
-            'position_y' => 30,
-            'video_url' => '/videos/step01.mp4'
-        ),
-        array(
-            'title' => 'Weryfikacja dokumentów',
-            'content' => 'System automatycznie weryfikuje poprawność danych, wykrywa błędy i sprawdza zgodność z wymogami prawnymi. Wszystkie dokumenty są walidowane przed dalszym przetwarzaniem.',
-            'number' => '02',
-            'icon' => 'check-circle',
-            'position_x' => 40,
-            'position_y' => 20,
-            'video_url' => '/videos/step02.mp4'
-        ),
-        array(
-            'title' => 'Analiza AI',
-            'content' => 'Zaawansowane algorytmy AI analizują i kategoryzują dokumenty, wyciągają kluczowe dane i automatycznie przypisują je do odpowiednich kategorii finansowych.',
-            'number' => '03',
-            'icon' => 'brain',
-            'position_x' => 60,
-            'position_y' => 30,
-            'video_url' => '/videos/step03.mp4'
-        ),
-        array(
-            'title' => 'Archiwizacja',
-            'content' => 'Dokumenty są automatycznie archiwizowane i indeksowane w bezpiecznym repozytorium. Możesz łatwo wyszukiwać i pobierać dokumenty z dowolnego okresu.',
-            'number' => '04',
-            'icon' => 'folder-open',
-            'position_x' => 80,
-            'position_y' => 20,
-            'video_url' => '/videos/step04.mp4'
-        ),
-        array(
-            'title' => 'Dashboard',
-            'content' => 'Kompletny przegląd finansów w czasie rzeczywistym. Intuicyjne wykresy, raporty i analizy pomagają w podejmowaniu świadomych decyzji biznesowych.',
-            'number' => '05',
-            'icon' => 'bar-chart-3',
-            'position_x' => 50,
-            'position_y' => 50,
-            'video_url' => '/videos/step05.mp4'
-        )
-    );
-    
-    foreach ($steps_data as $index => $step_data) {
-        $post_data = array(
-            'post_title' => $step_data['title'],
-            'post_content' => $step_data['content'],
-            'post_status' => 'publish',
-            'post_type' => 'process_steps',
-            'post_author' => 1,
-            'menu_order' => $index + 1
-        );
-        
-        $post_id = wp_insert_post($post_data);
-        
-        if ($post_id) {
-            update_field('step_number', $step_data['number'], $post_id);
-            update_field('step_icon', $step_data['icon'], $post_id);
-            update_field('step_position_x', $step_data['position_x'], $post_id);
-            update_field('step_position_y', $step_data['position_y'], $post_id);
-            update_field('step_video_url', $step_data['video_url'], $post_id);
-            
-            echo '<p>✅ Step ' . $step_data['number'] . ' imported (ID: ' . $post_id . ')</p>';
-        } else {
-            echo '<p>❌ Failed to import step ' . $step_data['number'] . '</p>';
-        }
+    if ($post_id) {
+        update_field('benefit_title', $benefit['title'], $post_id);
+        update_field('benefit_description', $benefit['description'], $post_id);
+        update_field('benefit_highlight', $benefit['highlight'], $post_id);
+        update_field('benefit_icon', $benefit['icon'], $post_id);
+        echo '<p>✓ Benefit "' . $benefit['title'] . '" imported</p>';
+    } else {
+        echo '<p>✗ Failed to import benefit "' . $benefit['title'] . '"</p>';
     }
 }
 
-function import_features() {
-    echo '<h3>Importing Features...</h3>';
+// Import Process Steps
+echo '<h2>Importing Process Steps...</h2>';
+$process_data = array(
+    array(
+        'title' => 'Wielokanałowy odbiór',
+        'description' => 'Faktury przychodzące dowolną drogą są automatycznie identyfikowane w systemie.',
+        'video_url' => '/videos/send_instruction.mp4',
+        'icon' => '📤'
+    ),
+    array(
+        'title' => 'Inteligentna weryfikacja',
+        'description' => 'System sprawdza czy dokumenty to faktury oraz weryfikuje kontrahentów w bazie GUS.',
+        'video_url' => '/videos/gus.mp4',
+        'icon' => '✅'
+    ),
+    array(
+        'title' => 'Analiza AI',
+        'description' => 'Zaawansowany algorytm ekstrahuje takie dane jak kwoty, kontrahenci, rodzaje kosztów.',
+        'video_url' => '/videos/automation.mp4',
+        'icon' => '🧠'
+    ),
+    array(
+        'title' => 'Automatyczna archiwizacja',
+        'description' => 'Faktury są zapisywane w uporządkowanej strukturze na Twoim Dysku Google.',
+        'video_url' => '/videos/google_drive.mp4',
+        'icon' => '📁'
+    ),
+    array(
+        'title' => 'Dashboard finansowy',
+        'description' => 'Wszystkie dane są natychmiast widoczne na przejrzystych dashboardach analitycznych.',
+        'video_url' => '/videos/analytics.mp4',
+        'icon' => '📊'
+    )
+);
+
+foreach ($process_data as $index => $process) {
+    $post_id = wp_insert_post(array(
+        'post_title' => $process['title'],
+        'post_content' => '',
+        'post_status' => 'publish',
+        'post_type' => 'dog_process',
+        'post_author' => 1,
+        'menu_order' => $index + 1,
+    ));
     
-    $features_data = array(
-        array(
-            'title' => 'Automatyzacja procesów',
-            'content' => 'Automatyczne kategoryzowanie i klasyfikacja dokumentów bez interwencji użytkownika. System uczy się z Twoich preferencji i dostosowuje się do Twojego stylu pracy.',
-            'icon' => 'zap',
-            'highlight' => 'Auto-categorize',
-            'video_url' => '/videos/feature01.mp4'
-        ),
-        array(
-            'title' => 'Analiza finansowa',
-            'content' => 'Na bieżąco monitoruj koszty i przychody dzięki intuicyjnym zestawieniom i wykresom. Komplet dokumentów można później łatwo wysłać do księgowej.',
-            'icon' => 'settings',
-            'highlight' => 'Real-time',
-            'video_url' => '/videos/feature02.mp4'
-        ),
-        array(
-            'title' => 'Wzrost wydajności',
-            'content' => 'Zwiększ wydajność swojego zespołu o 300% dzięki automatyzacji rutynowych zadań. Skup się na tym, co naprawdę ważne dla Twojego biznesu.',
-            'icon' => 'trending-up',
-            'highlight' => '+300%',
-            'video_url' => '/videos/feature03.mp4'
-        ),
-        array(
-            'title' => 'Bezpieczeństwo danych',
-            'content' => 'Twoje dane są chronione najnowszymi standardami szyfrowania. Regularne backupy i monitoring bezpieczeństwa zapewniają pełną ochronę informacji.',
-            'icon' => 'shield',
-            'highlight' => 'Bank-level',
-            'video_url' => '/videos/feature04.mp4'
-        ),
-        array(
-            'title' => 'Czas rzeczywisty',
-            'content' => 'Wszystkie dane są natychmiast widoczne w dashboardzie, dając Ci pełny wgląd w koszty i przychody. Nie czekaj na raporty - wszystko w czasie rzeczywistym.',
-            'icon' => 'clock',
-            'highlight' => 'Live updates',
-            'video_url' => '/videos/feature05.mp4'
-        )
-    );
-    
-    foreach ($features_data as $index => $feature_data) {
-        $post_data = array(
-            'post_title' => $feature_data['title'],
-            'post_content' => $feature_data['content'],
-            'post_status' => 'publish',
-            'post_type' => 'features',
-            'post_author' => 1,
-            'menu_order' => $index + 1
-        );
-        
-        $post_id = wp_insert_post($post_data);
-        
-        if ($post_id) {
-            update_field('feature_icon', $feature_data['icon'], $post_id);
-            update_field('feature_highlight', $feature_data['highlight'], $post_id);
-            update_field('feature_video_url', $feature_data['video_url'], $post_id);
-            
-            echo '<p>✅ Feature "' . $feature_data['title'] . '" imported (ID: ' . $post_id . ')</p>';
-        } else {
-            echo '<p>❌ Failed to import feature "' . $feature_data['title'] . '"</p>';
-        }
+    if ($post_id) {
+        update_field('process_title', $process['title'], $post_id);
+        update_field('process_description', $process['description'], $post_id);
+        update_field('process_video_url', $process['video_url'], $post_id);
+        update_field('process_icon', $process['icon'], $post_id);
+        echo '<p>✓ Process step "' . $process['title'] . '" imported</p>';
+    } else {
+        echo '<p>✗ Failed to import process step "' . $process['title'] . '"</p>';
     }
 }
 
-function import_integrations() {
-    echo '<h3>Importing Integrations...</h3>';
+// Import Pricing Plans
+echo '<h2>Importing Pricing Plans...</h2>';
+$pricing_data = array(
+    array(
+        'name' => 'Starter',
+        'description' => 'Na dobry początek.',
+        'price' => 0,
+        'invoices' => '10 faktur miesięcznie.',
+        'button_text' => 'Rozpocznij za darmo',
+        'button_url' => '/trial?plan=starter&billing=monthly',
+        'is_popular' => false
+    ),
+    array(
+        'name' => 'Professional',
+        'description' => 'Dla rozwijających się firm.',
+        'price' => 149,
+        'invoices' => '150 faktur miesięcznie.',
+        'button_text' => 'Wybierz plan',
+        'button_url' => '/trial?plan=professional&billing=monthly',
+        'is_popular' => true
+    ),
+    array(
+        'name' => 'Business',
+        'description' => 'Dla dużych organizacji.',
+        'price' => 299,
+        'invoices' => '500 faktur miesięcznie.',
+        'button_text' => 'Wybierz plan',
+        'button_url' => '/trial?plan=business&billing=monthly',
+        'is_popular' => false
+    ),
+    array(
+        'name' => 'Enterprise',
+        'description' => 'Dla tych, którzy potrzebują więcej',
+        'price' => null,
+        'invoices' => 'Niestandardowe rozwiązania.',
+        'button_text' => 'Wybierz plan',
+        'button_url' => '/trial?plan=enterprise&billing=monthly',
+        'is_popular' => false
+    )
+);
+
+foreach ($pricing_data as $index => $pricing) {
+    $post_id = wp_insert_post(array(
+        'post_title' => $pricing['name'],
+        'post_content' => '',
+        'post_status' => 'publish',
+        'post_type' => 'dog_pricing',
+        'post_author' => 1,
+        'menu_order' => $index + 1,
+    ));
     
-    $integrations_data = array(
-        array(
-            'title' => 'KSeF',
-            'content' => 'Integracja z Krajowym Systemem e-Faktur',
-            'logo' => '/assets/images/ksef_logo.svg',
-            'url' => 'https://ksef.gov.pl',
-            'coming_soon' => false
-        ),
-        array(
-            'title' => 'Fakturownia',
-            'content' => 'Automatyczne pobieranie faktur z Fakturowni',
-            'logo' => '/assets/images/fakturownia_logo.svg',
-            'url' => 'https://fakturownia.pl',
-            'coming_soon' => false
-        ),
-        array(
-            'title' => 'Google Drive',
-            'content' => 'Synchronizacja z Google Drive',
-            'logo' => '/assets/images/google_drive_logo.svg',
-            'url' => 'https://drive.google.com',
-            'coming_soon' => false
-        ),
-        array(
-            'title' => 'Gmail',
-            'content' => 'Automatyczne pobieranie faktur z Gmail',
-            'logo' => '/assets/images/logo_gmail.svg',
-            'url' => 'https://gmail.com',
-            'coming_soon' => false
-        ),
-        array(
-            'title' => 'SMTP/IMAP',
-            'content' => 'Integracja z serwerami email',
-            'logo' => '/assets/images/smtp_imap_icon.svg',
-            'url' => '#',
-            'coming_soon' => false
-        ),
-        array(
-            'title' => 'Comarch Optima',
-            'content' => 'Integracja z systemem Comarch Optima',
-            'logo' => '/assets/images/optima_logo.svg',
-            'url' => 'https://optima.comarch.pl',
-            'coming_soon' => false
-        ),
-        array(
-            'title' => 'SALDeo',
-            'content' => 'Integracja z systemem SALDeo',
-            'logo' => '/assets/images/saldeo_logo.svg',
-            'url' => 'https://saldeo.pl',
-            'coming_soon' => true
-        ),
-        array(
-            'title' => 'GUS',
-            'content' => 'Integracja z systemem GUS',
-            'logo' => '/assets/images/gus_logo.svg',
-            'url' => 'https://gus.gov.pl',
-            'coming_soon' => true
-        )
-    );
-    
-    foreach ($integrations_data as $index => $integration_data) {
-        $post_data = array(
-            'post_title' => $integration_data['title'],
-            'post_content' => $integration_data['content'],
-            'post_status' => 'publish',
-            'post_type' => 'integrations',
-            'post_author' => 1,
-            'menu_order' => $index + 1
-        );
-        
-        $post_id = wp_insert_post($post_data);
-        
-        if ($post_id) {
-            update_field('integration_logo', $integration_data['logo'], $post_id);
-            update_field('integration_url', $integration_data['url'], $post_id);
-            update_field('integration_coming_soon', $integration_data['coming_soon'], $post_id);
-            
-            echo '<p>✅ Integration "' . $integration_data['title'] . '" imported (ID: ' . $post_id . ')</p>';
-        } else {
-            echo '<p>❌ Failed to import integration "' . $integration_data['title'] . '"</p>';
-        }
+    if ($post_id) {
+        update_field('pricing_name', $pricing['name'], $post_id);
+        update_field('pricing_description', $pricing['description'], $post_id);
+        update_field('pricing_price', $pricing['price'], $post_id);
+        update_field('pricing_invoices', $pricing['invoices'], $post_id);
+        update_field('pricing_button_text', $pricing['button_text'], $post_id);
+        update_field('pricing_button_url', $pricing['button_url'], $post_id);
+        update_field('pricing_is_popular', $pricing['is_popular'], $post_id);
+        echo '<p>✓ Pricing plan "' . $pricing['name'] . '" imported</p>';
+    } else {
+        echo '<p>✗ Failed to import pricing plan "' . $pricing['name'] . '"</p>';
     }
 }
 
-function import_benefits() {
-    echo '<h3>Importing Benefits...</h3>';
+// Import Integrations
+echo '<h2>Importing Integrations...</h2>';
+$integrations_data = array(
+    array(
+        'title' => 'SMTP/IMAP',
+        'logo' => '/assets/smtp_imap_icon.svg',
+        'coming_soon' => false
+    ),
+    array(
+        'title' => 'Gmail',
+        'logo' => '/assets/logo_gmail.svg',
+        'coming_soon' => false
+    ),
+    array(
+        'title' => 'Google Drive',
+        'logo' => '/assets/google_drive_logo.svg',
+        'coming_soon' => false
+    ),
+    array(
+        'title' => 'GUS',
+        'logo' => '/assets/gus_logo.svg',
+        'coming_soon' => false
+    ),
+    array(
+        'title' => 'Comarch Optima',
+        'logo' => '/assets/optima_logo.svg',
+        'coming_soon' => false
+    ),
+    array(
+        'title' => 'Fakturownia',
+        'logo' => '/assets/fakturownia_logo.svg',
+        'coming_soon' => false
+    ),
+    array(
+        'title' => 'Saldeo',
+        'logo' => '/assets/saldeo_logo.svg',
+        'coming_soon' => true
+    ),
+    array(
+        'title' => 'KSeF',
+        'logo' => '/assets/ksef_logo.svg',
+        'coming_soon' => true
+    )
+);
+
+foreach ($integrations_data as $index => $integration) {
+    $post_id = wp_insert_post(array(
+        'post_title' => $integration['title'],
+        'post_content' => '',
+        'post_status' => 'publish',
+        'post_type' => 'dog_integrations',
+        'post_author' => 1,
+        'menu_order' => $index + 1,
+    ));
     
-    $benefits_data = array(
-        array(
-            'title' => 'Automatyzacja',
-            'content' => 'Oszczędź 10 godzin tygodniowo dzięki automatyzacji rutynowych zadań. System pracuje 24/7, więc Ty możesz skupić się na rozwoju biznesu.',
-            'icon' => 'bot',
-            'highlight' => '10h/week'
-        ),
-        array(
-            'title' => 'Bilans w czasie rzeczywistym',
-            'content' => 'Wszystkie dane są natychmiast widoczne w dashboardzie, dając Ci pełny wgląd w koszty i przychody. Nie czekaj na raporty - wszystko w czasie rzeczywistym.',
-            'icon' => 'trending-up',
-            'highlight' => 'Real-time'
-        ),
-        array(
-            'title' => 'Inteligentna kategoryzacja',
-            'content' => 'AI automatycznie kategoryzuje dokumenty na podstawie treści, kwot i dostawców. Uczy się z Twoich preferencji i dostosowuje się do Twojego stylu pracy.',
-            'icon' => 'tags',
-            'highlight' => 'AI-powered'
-        ),
-        array(
-            'title' => 'Bezpieczeństwo',
-            'content' => 'Twoje dane są chronione najnowszymi standardami szyfrowania. Regularne backupy i monitoring bezpieczeństwa zapewniają pełną ochronę informacji.',
-            'icon' => 'shield',
-            'highlight' => 'Bank-level'
-        ),
-        array(
-            'title' => 'Dostęp 24/7',
-            'content' => 'Dostęp do dokumentów z dowolnego miejsca i o każdej porze. Aplikacja mobilna pozwala na zarządzanie fakturami w podróży.',
-            'icon' => 'clock',
-            'highlight' => '24/7'
-        )
-    );
-    
-    foreach ($benefits_data as $index => $benefit_data) {
-        $post_data = array(
-            'post_title' => $benefit_data['title'],
-            'post_content' => $benefit_data['content'],
-            'post_status' => 'publish',
-            'post_type' => 'benefits',
-            'post_author' => 1,
-            'menu_order' => $index + 1
-        );
-        
-        $post_id = wp_insert_post($post_data);
-        
-        if ($post_id) {
-            update_field('benefit_icon', $benefit_data['icon'], $post_id);
-            update_field('benefit_highlight', $benefit_data['highlight'], $post_id);
-            
-            echo '<p>✅ Benefit "' . $benefit_data['title'] . '" imported (ID: ' . $post_id . ')</p>';
-        } else {
-            echo '<p>❌ Failed to import benefit "' . $benefit_data['title'] . '"</p>';
-        }
+    if ($post_id) {
+        update_field('integration_title', $integration['title'], $post_id);
+        update_field('integration_logo', $integration['logo'], $post_id);
+        update_field('integration_coming_soon', $integration['coming_soon'], $post_id);
+        echo '<p>✓ Integration "' . $integration['title'] . '" imported</p>';
+    } else {
+        echo '<p>✗ Failed to import integration "' . $integration['title'] . '"</p>';
     }
 }
 
-function import_faq() {
-    echo '<h3>Importing FAQ...</h3>';
+// Import FAQ
+echo '<h2>Importing FAQ...</h2>';
+$faq_data = array(
+    array(
+        'question' => 'Jak zabezpieczane są moje dane finansowe?',
+        'answer' => 'DogInvoice działa w oparciu o najwyższe standardy bezpieczeństwa. Twoje dane są szyfrowane i przechowywane zgodnie z regulacjami RODO. Używamy tylko zaufanych dostawców chmury i regularnie przeprowadzamy audyty bezpieczeństwa.'
+    ),
+    array(
+        'question' => 'Czy system można połączyć z moim oprogramowaniem księgowym?',
+        'answer' => 'Tak, DogInvoice oferuje integracje z popularnymi systemami księgowymi. Możemy również stworzyć dedykowaną integrację dla Twojego systemu.'
+    ),
+    array(
+        'question' => 'Ile trwa wdrożenie systemu?',
+        'answer' => 'Standardowe wdrożenie trwa 2-3 dni robocze, włączając szkolenie pracowników. W przypadku bardziej złożonych konfiguracji może to potrwać do 5 dni.'
+    ),
+    array(
+        'question' => 'Czy mogę dostosować system do nietypowych potrzeb?',
+        'answer' => 'Oferujemy personalizację kategorii kosztów, przepływu pracy i raportów, aby idealnie dopasować system do Twojej działalności.'
+    ),
+    array(
+        'question' => 'Czy system obsługuje faktury w różnych językach?',
+        'answer' => 'Tak, DogInvoice obsługuje faktury w większości języków.'
+    )
+);
+
+foreach ($faq_data as $index => $faq) {
+    $post_id = wp_insert_post(array(
+        'post_title' => $faq['question'],
+        'post_content' => '',
+        'post_status' => 'publish',
+        'post_type' => 'dog_faq',
+        'post_author' => 1,
+        'menu_order' => $index + 1,
+    ));
     
-    $faq_data = array(
-        array(
-            'question' => 'Jak działa automatyczne rozpoznawanie faktur?',
-            'answer' => 'DogInvoice wykorzystuje zaawansowane algorytmy AI do automatycznego rozpoznawania i ekstrakcji danych z faktur. System analizuje strukturę dokumentu, identyfikuje kluczowe elementy jak numer faktury, data, kwota, NIP i automatycznie kategoryzuje dokumenty.'
-        ),
-        array(
-            'question' => 'Czy moje dane są bezpieczne?',
-            'answer' => 'Tak, bezpieczeństwo danych to nasz priorytet. Wszystkie dane są szyfrowane przy użyciu najnowszych standardów szyfrowania (AES-256). Regularnie wykonujemy backupy i monitorujemy system pod kątem bezpieczeństwa. Nasze serwery są zlokalizowane w Polsce i spełniają wymogi RODO.'
-        ),
-        array(
-            'question' => 'Jakie integracje są dostępne?',
-            'answer' => 'DogInvoice integruje się z najpopularniejszymi systemami księgowymi i narzędziami biznesowymi, w tym KSeF, Fakturownia, Google Drive, Gmail, Comarch Optima i wiele innych. Lista dostępnych integracji jest stale rozszerzana.'
-        ),
-        array(
-            'question' => 'Czy mogę anulować subskrypcję?',
-            'answer' => 'Tak, możesz anulować subskrypcję w dowolnym momencie. Anulowanie nie wiąże się z żadnymi opłatami. Twoje dane pozostaną dostępne przez 30 dni po anulowaniu, co pozwoli Ci na eksport wszystkich informacji.'
-        ),
-        array(
-            'question' => 'Jak działa system backup?',
-            'answer' => 'Wykonujemy automatyczne backupy danych codziennie. Wszystkie dane są przechowywane w wielu lokalizacjach geograficznych, co zapewnia maksymalną dostępność i bezpieczeństwo. W przypadku awarii możesz przywrócić dane z dowolnego punktu w czasie.'
-        ),
-        array(
-            'question' => 'Czy DogInvoice działa na urządzeniach mobilnych?',
-            'answer' => 'Tak, DogInvoice jest w pełni responsywny i działa na wszystkich urządzeniach mobilnych. Możesz zarządzać fakturami, przeglądać raporty i monitorować finanse z dowolnego miejsca za pomocą smartfona lub tabletu.'
-        )
-    );
-    
-    foreach ($faq_data as $index => $faq_item) {
-        $post_data = array(
-            'post_title' => $faq_item['question'],
-            'post_content' => $faq_item['answer'],
-            'post_status' => 'publish',
-            'post_type' => 'faq',
-            'post_author' => 1,
-            'menu_order' => $index + 1
-        );
-        
-        $post_id = wp_insert_post($post_data);
-        
-        if ($post_id) {
-            echo '<p>✅ FAQ "' . $faq_item['question'] . '" imported (ID: ' . $post_id . ')</p>';
-        } else {
-            echo '<p>❌ Failed to import FAQ "' . $faq_item['question'] . '"</p>';
-        }
+    if ($post_id) {
+        update_field('faq_question', $faq['question'], $post_id);
+        update_field('faq_answer', $faq['answer'], $post_id);
+        echo '<p>✓ FAQ "' . $faq['question'] . '" imported</p>';
+    } else {
+        echo '<p>✗ Failed to import FAQ "' . $faq['question'] . '"</p>';
     }
 }
 
-function import_pricing_plans() {
-    echo '<h3>Importing Pricing Plans...</h3>';
-    
-    $plans_data = array(
-        array(
-            'title' => 'Basic',
-            'content' => 'Idealny dla małych firm i freelancerów',
-            'price' => '99',
-            'period' => '/miesiąc',
-            'features' => "100 faktur/miesiąc\nPodstawowe raporty\nEmail support\nIntegracja z 3 systemami\nBackup danych\nMobile app",
-            'cta_text' => 'Rozpocznij',
-            'cta_url' => '/trial',
-            'popular' => false
-        ),
-        array(
-            'title' => 'Pro',
-            'content' => 'Najpopularniejszy plan dla rozwijających się firm',
-            'price' => '199',
-            'period' => '/miesiąc',
-            'features' => "500 faktur/miesiąc\nZaawansowane raporty\nPriority support\nWszystkie integracje\nAPI access\nCustom branding\nAdvanced analytics",
-            'cta_text' => 'Rozpocznij',
-            'cta_url' => '/trial',
-            'popular' => true
-        ),
-        array(
-            'title' => 'Enterprise',
-            'content' => 'Dla dużych firm z zaawansowanymi wymaganiami',
-            'price' => 'Kontakt',
-            'period' => '',
-            'features' => "Nielimitowane faktury\nCustom integrations\nDedicated support\nSLA 99.9%\nOn-premise deployment\nCustom development\nWhite-label solution",
-            'cta_text' => 'Skontaktuj się',
-            'cta_url' => '/contact',
-            'popular' => false
-        )
-    );
-    
-    foreach ($plans_data as $index => $plan_data) {
-        $post_data = array(
-            'post_title' => $plan_data['title'],
-            'post_content' => $plan_data['content'],
-            'post_status' => 'publish',
-            'post_type' => 'pricing_plans',
-            'post_author' => 1,
-            'menu_order' => $index + 1
-        );
-        
-        $post_id = wp_insert_post($post_data);
-        
-        if ($post_id) {
-            update_field('plan_price', $plan_data['price'], $post_id);
-            update_field('plan_period', $plan_data['period'], $post_id);
-            update_field('plan_features', $plan_data['features'], $post_id);
-            update_field('plan_cta_text', $plan_data['cta_text'], $post_id);
-            update_field('plan_cta_url', $plan_data['cta_url'], $post_id);
-            update_field('plan_popular', $plan_data['popular'], $post_id);
-            
-            echo '<p>✅ Plan "' . $plan_data['title'] . '" imported (ID: ' . $post_id . ')</p>';
-        } else {
-            echo '<p>❌ Failed to import plan "' . $plan_data['title'] . '"</p>';
-        }
-    }
-}
-
-// Run the import if accessed directly
-if (isset($_GET['run_import']) && $_GET['run_import'] === 'true') {
-    doginvoice_import_sample_data();
-}
+echo '<h2>Import Complete!</h2>';
+echo '<p>All content has been successfully imported from the Next.js application.</p>';
+echo '<p><a href="' . home_url() . '" class="button button-primary">View Website</a></p>';
+echo '<p><a href="' . admin_url() . '" class="button">Go to Admin</a></p>';
 ?>

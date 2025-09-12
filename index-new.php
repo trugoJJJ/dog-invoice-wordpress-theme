@@ -9,33 +9,33 @@ get_header(); ?>
 
 <main id="main" class="site-main">
     <?php
-    // Get all data from unified admin system
-    $content = get_doginvoice_content();
+    // Get all data from unified options page
+    $hero_title = get_field('hero_title', 'option') ?: 'Robisz zdjęcie faktury, a reszta dzieje się automatycznie';
+    $hero_subtitle = get_field('hero_subtitle', 'option') ?: 'DogInvoice automatycznie organizuje Twoje dokumenty, eliminuje chaos administracyjny i pozwala Ci skupić się na tym, co naprawdę ważne.';
+    $hero_video_file = get_field('hero_video_file', 'option');
+    $hero_video_url = get_field('hero_video_url', 'option');
+    $hero_video_url = $hero_video_file ?: $hero_video_url ?: '/videos/doginvoice_hero.mp4';
+    $hero_video_poster = get_field('hero_video_poster', 'option') ?: '/doginvoice_hero_frame.png';
+    $hero_cta_primary_text = get_field('hero_cta_primary_text', 'option') ?: 'Wybierz swój plan';
+    $hero_cta_primary_url = get_field('hero_cta_primary_url', 'option') ?: '#pricing';
+    $hero_cta_secondary_text = get_field('hero_cta_secondary_text', 'option') ?: 'Przetestuj za darmo';
+    $hero_cta_secondary_url = get_field('hero_cta_secondary_url', 'option') ?: '/trial';
     
-    $hero_title = $content['hero_title'] ?? 'Robisz zdjęcie faktury, a reszta dzieje się automatycznie';
-    $hero_subtitle = $content['hero_subtitle'] ?? 'DogInvoice automatycznie organizuje Twoje dokumenty, eliminuje chaos administracyjny i pozwala Ci skupić się na tym, co naprawdę ważne.';
-    $hero_video_url = $content['hero_video_url'] ?? '/videos/doginvoice_hero.mp4';
-    $hero_video_poster = $content['hero_video_poster'] ?? '/doginvoice_hero_frame.png';
-    $hero_cta_primary_text = $content['hero_cta_primary_text'] ?? 'Wybierz swój plan';
-    $hero_cta_primary_url = $content['hero_cta_primary_url'] ?? '#pricing';
-    $hero_cta_secondary_text = $content['hero_cta_secondary_text'] ?? 'Przetestuj za darmo';
-    $hero_cta_secondary_url = $content['hero_cta_secondary_url'] ?? '/trial';
-    
-    $animated_numbers = $content['animated_numbers'] ?? array();
-    $process_steps = $content['process_steps'] ?? array();
-    $features = $content['features'] ?? array();
-    $integrations = $content['integrations'] ?? array();
-    $benefits = $content['benefits'] ?? array();
-    $pricing_plans = $content['pricing_plans'] ?? array();
-    $faq = $content['faq'] ?? array();
-    $trusted_by_title = $content['trusted_by_title'] ?? 'Z DogInvoice już korzystają';
-    $trusted_by_logos = $content['trusted_by_logos'] ?? array();
-    $cta_title = $content['cta_title'] ?? 'Zacznij już dziś';
-    $cta_subtitle = $content['cta_subtitle'] ?? 'Dołącz do firm, które oszczędzają 15 godzin tygodniowo dzięki automatyzacji.';
-    $cta_primary_text = $content['cta_primary_text'] ?? 'Wybierz swój plan';
-    $cta_primary_url = $content['cta_primary_url'] ?? '#pricing';
-    $cta_secondary_text = $content['cta_secondary_text'] ?? 'Przetestuj za darmo';
-    $cta_secondary_url = $content['cta_secondary_url'] ?? '/trial';
+    $animated_numbers = get_field('animated_numbers', 'option') ?: array();
+    $process_steps = get_field('process_steps', 'option') ?: array();
+    $features = get_field('features', 'option') ?: array();
+    $integrations = get_field('integrations', 'option') ?: array();
+    $benefits = get_field('benefits', 'option') ?: array();
+    $pricing_plans = get_field('pricing_plans', 'option') ?: array();
+    $faq = get_field('faq', 'option') ?: array();
+    $trusted_by_title = get_field('trusted_by_title', 'option') ?: 'Z DogInvoice już korzystają';
+    $trusted_by_logos = get_field('trusted_by_logos', 'option') ?: array();
+    $cta_title = get_field('cta_title', 'option') ?: 'Zacznij już dziś';
+    $cta_subtitle = get_field('cta_subtitle', 'option') ?: 'Dołącz do firm, które oszczędzają 15 godzin tygodniowo dzięki automatyzacji.';
+    $cta_primary_text = get_field('cta_primary_text', 'option') ?: 'Wybierz swój plan';
+    $cta_primary_url = get_field('cta_primary_url', 'option') ?: '#pricing';
+    $cta_secondary_text = get_field('cta_secondary_text', 'option') ?: 'Przetestuj za darmo';
+    $cta_secondary_url = get_field('cta_secondary_url', 'option') ?: '/trial';
     ?>
 
     <!-- Hero Section -->
@@ -223,7 +223,7 @@ get_header(); ?>
                     
                     <div class="plan-features">
                         <?php 
-                        $features_list = is_array($plan['plan_features']) ? $plan['plan_features'] : explode("\n", $plan['plan_features']);
+                        $features_list = explode("\n", $plan['plan_features']);
                         foreach ($features_list as $feature_line):
                             $feature_line = trim($feature_line);
                             if ($feature_line):

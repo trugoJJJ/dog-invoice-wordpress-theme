@@ -3,6 +3,9 @@
  * DogInvoice WordPress Theme Functions
  */
 
+// Include unified admin interface
+require_once get_template_directory() . '/unified-admin.php';
+
 // Enqueue styles and scripts
 function doginvoice_enqueue_scripts() {
     wp_enqueue_style('doginvoice-style', get_template_directory_uri() . '/assets/css/style.css', array(), '1.0.0');
@@ -16,162 +19,141 @@ function doginvoice_enqueue_scripts() {
 }
 add_action('wp_enqueue_scripts', 'doginvoice_enqueue_scripts');
 
-// Register Custom Post Types
-function create_doginvoice_post_types() {
-    // Hero Section
-    register_post_type('doginvoice_hero', array(
-        'labels' => array(
-            'name' => 'Hero Section',
-            'singular_name' => 'Hero Section',
-            'add_new' => 'Dodaj nowy',
-            'add_new_item' => 'Dodaj nową sekcję Hero',
-            'edit_item' => 'Edytuj sekcję Hero',
-            'new_item' => 'Nowa sekcja Hero',
-            'view_item' => 'Zobacz sekcję Hero',
-            'search_items' => 'Szukaj sekcji Hero',
-            'not_found' => 'Nie znaleziono sekcji Hero',
-            'not_found_in_trash' => 'Nie znaleziono sekcji Hero w koszu'
-        ),
-        'public' => true,
-        'has_archive' => false,
-        'supports' => array('title', 'editor'),
-        'menu_icon' => 'dashicons-admin-home',
-        'show_in_rest' => true
-    ));
-
-    // Process Steps
-    register_post_type('process_steps', array(
-        'labels' => array(
-            'name' => 'Kroki procesu',
-            'singular_name' => 'Krok procesu',
-            'add_new' => 'Dodaj nowy krok',
-            'add_new_item' => 'Dodaj nowy krok procesu',
-            'edit_item' => 'Edytuj krok procesu',
-            'new_item' => 'Nowy krok procesu',
-            'view_item' => 'Zobacz krok procesu',
-            'search_items' => 'Szukaj kroków procesu',
-            'not_found' => 'Nie znaleziono kroków procesu',
-            'not_found_in_trash' => 'Nie znaleziono kroków procesu w koszu'
-        ),
-        'public' => true,
-        'has_archive' => false,
-        'supports' => array('title', 'editor'),
-        'menu_icon' => 'dashicons-list-view',
-        'show_in_rest' => true,
-        'menu_position' => 5
-    ));
-
-    // Features
-    register_post_type('features', array(
-        'labels' => array(
-            'name' => 'Funkcjonalności',
-            'singular_name' => 'Funkcjonalność',
-            'add_new' => 'Dodaj nową funkcjonalność',
-            'add_new_item' => 'Dodaj nową funkcjonalność',
-            'edit_item' => 'Edytuj funkcjonalność',
-            'new_item' => 'Nowa funkcjonalność',
-            'view_item' => 'Zobacz funkcjonalność',
-            'search_items' => 'Szukaj funkcjonalności',
-            'not_found' => 'Nie znaleziono funkcjonalności',
-            'not_found_in_trash' => 'Nie znaleziono funkcjonalności w koszu'
-        ),
-        'public' => true,
-        'has_archive' => false,
-        'supports' => array('title', 'editor'),
-        'menu_icon' => 'dashicons-star-filled',
-        'show_in_rest' => true,
-        'menu_position' => 6
-    ));
-
-    // Integrations
-    register_post_type('integrations', array(
-        'labels' => array(
-            'name' => 'Integracje',
-            'singular_name' => 'Integracja',
-            'add_new' => 'Dodaj nową integrację',
-            'add_new_item' => 'Dodaj nową integrację',
-            'edit_item' => 'Edytuj integrację',
-            'new_item' => 'Nowa integracja',
-            'view_item' => 'Zobacz integrację',
-            'search_items' => 'Szukaj integracji',
-            'not_found' => 'Nie znaleziono integracji',
-            'not_found_in_trash' => 'Nie znaleziono integracji w koszu'
-        ),
-        'public' => true,
-        'has_archive' => false,
-        'supports' => array('title', 'editor'),
-        'menu_icon' => 'dashicons-admin-plugins',
-        'show_in_rest' => true,
-        'menu_position' => 7
-    ));
-
-    // Benefits
-    register_post_type('benefits', array(
-        'labels' => array(
-            'name' => 'Korzyści',
-            'singular_name' => 'Korzyść',
-            'add_new' => 'Dodaj nową korzyść',
-            'add_new_item' => 'Dodaj nową korzyść',
-            'edit_item' => 'Edytuj korzyść',
-            'new_item' => 'Nowa korzyść',
-            'view_item' => 'Zobacz korzyść',
-            'search_items' => 'Szukaj korzyści',
-            'not_found' => 'Nie znaleziono korzyści',
-            'not_found_in_trash' => 'Nie znaleziono korzyści w koszu'
-        ),
-        'public' => true,
-        'has_archive' => false,
-        'supports' => array('title', 'editor'),
-        'menu_icon' => 'dashicons-yes-alt',
-        'show_in_rest' => true,
-        'menu_position' => 8
-    ));
-
-    // FAQ
-    register_post_type('faq', array(
-        'labels' => array(
-            'name' => 'FAQ',
-            'singular_name' => 'Pytanie',
-            'add_new' => 'Dodaj nowe pytanie',
-            'add_new_item' => 'Dodaj nowe pytanie',
-            'edit_item' => 'Edytuj pytanie',
-            'new_item' => 'Nowe pytanie',
-            'view_item' => 'Zobacz pytanie',
-            'search_items' => 'Szukaj pytań',
-            'not_found' => 'Nie znaleziono pytań',
-            'not_found_in_trash' => 'Nie znaleziono pytań w koszu'
-        ),
-        'public' => true,
-        'has_archive' => false,
-        'supports' => array('title', 'editor'),
-        'menu_icon' => 'dashicons-editor-help',
-        'show_in_rest' => true,
-        'menu_position' => 9
-    ));
-
-    // Pricing Plans
-    register_post_type('pricing_plans', array(
-        'labels' => array(
-            'name' => 'Plany cenowe',
-            'singular_name' => 'Plan cenowy',
-            'add_new' => 'Dodaj nowy plan',
-            'add_new_item' => 'Dodaj nowy plan cenowy',
-            'edit_item' => 'Edytuj plan cenowy',
-            'new_item' => 'Nowy plan cenowy',
-            'view_item' => 'Zobacz plan cenowy',
-            'search_items' => 'Szukaj planów cenowych',
-            'not_found' => 'Nie znaleziono planów cenowych',
-            'not_found_in_trash' => 'Nie znaleziono planów cenowych w koszu'
-        ),
-        'public' => true,
-        'has_archive' => false,
-        'supports' => array('title', 'editor'),
-        'menu_icon' => 'dashicons-money-alt',
-        'show_in_rest' => true,
-        'menu_position' => 10
-    ));
+// Remove Gutenberg block comments from content
+function remove_gutenberg_comments($content) {
+    if (empty($content) || !is_string($content)) {
+        return $content;
+    }
+    
+    // Remove wp:paragraph comments
+    $content = preg_replace('/<!-- wp:paragraph -->/', '', $content);
+    $content = preg_replace('/<!-- \/wp:paragraph -->/', '', $content);
+    
+    // Remove other common Gutenberg comments
+    $content = preg_replace('/<!-- wp:[^>]* -->/', '', $content);
+    $content = preg_replace('/<!-- \/wp:[^>]* -->/', '', $content);
+    
+    // Remove any remaining HTML comments
+    $content = preg_replace('/<!--.*?-->/s', '', $content);
+    
+    return $content;
 }
-add_action('init', 'create_doginvoice_post_types');
+
+// Apply to all content filters
+add_filter('the_content', 'remove_gutenberg_comments', 20);
+add_filter('get_the_content', 'remove_gutenberg_comments', 20);
+add_filter('the_excerpt', 'remove_gutenberg_comments', 20);
+add_filter('the_title', 'remove_gutenberg_comments', 20);
+
+// Also remove from ACF fields
+function remove_gutenberg_from_acf($value, $post_id, $field) {
+    if (is_string($value)) {
+        $value = remove_gutenberg_comments($value);
+    }
+    return $value;
+}
+add_filter('acf/load_value', 'remove_gutenberg_from_acf', 10, 3);
+add_filter('acf/format_value', 'remove_gutenberg_from_acf', 10, 3);
+
+// Remove from post content directly
+function clean_post_content($content) {
+    return remove_gutenberg_comments($content);
+}
+add_filter('content_save_pre', 'clean_post_content');
+
+// Additional aggressive cleaning for display
+function aggressive_gutenberg_cleanup($content) {
+    if (empty($content) || !is_string($content)) {
+        return $content;
+    }
+    
+    // Remove all HTML comments
+    $content = preg_replace('/<!--.*?-->/s', '', $content);
+    
+    // Remove specific Gutenberg patterns
+    $patterns = array(
+        '/<!-- wp:paragraph -->/',
+        '/<!-- \/wp:paragraph -->/',
+        '/<!-- wp:heading[^>]*? -->/',
+        '/<!-- \/wp:heading -->/',
+        '/<!-- wp:quote[^>]*? -->/',
+        '/<!-- \/wp:quote -->/',
+        '/<!-- wp:list[^>]*? -->/',
+        '/<!-- \/wp:list -->/',
+        '/<!-- wp:[^>]*? \/>/',
+        '/<!-- wp:[^>]*? -->/',
+        '/<!-- \/wp:[^>]*? -->/'
+    );
+    
+    foreach ($patterns as $pattern) {
+        $content = preg_replace($pattern, '', $content);
+    }
+    
+    return $content;
+}
+
+// Comprehensive HTML cleanup function
+function comprehensive_html_cleanup($content) {
+    if (empty($content) || !is_string($content)) {
+        return $content;
+    }
+    
+    // Remove HTML comments
+    $content = preg_replace('/<!--.*?-->/s', '', $content);
+    
+    // Remove non-breaking spaces
+    $content = str_replace('&nbsp;', ' ', $content);
+    $content = str_replace('&#160;', ' ', $content);
+    $content = str_replace('&amp;nbsp;', ' ', $content);
+    
+    // Remove empty paragraph tags
+    $content = preg_replace('/<p[^>]*>\s*<\/p>/i', '', $content);
+    $content = preg_replace('/<p[^>]*>&nbsp;<\/p>/i', '', $content);
+    
+    // Remove paragraph tags but keep content
+    $content = preg_replace('/<\/?p[^>]*>/i', '', $content);
+    
+    // Remove other common HTML tags that might be problematic
+    $content = preg_replace('/<\/?div[^>]*>/i', '', $content);
+    $content = preg_replace('/<\/?span[^>]*>/i', '', $content);
+    $content = preg_replace('/<\/?br[^>]*>/i', '', $content);
+    
+    // Clean up multiple spaces
+    $content = preg_replace('/\s+/', ' ', $content);
+    $content = trim($content);
+    
+    return $content;
+}
+
+// Disable wpautop to prevent automatic paragraph tags
+remove_filter('the_content', 'wpautop');
+remove_filter('the_excerpt', 'wpautop');
+remove_filter('acf_the_content', 'wpautop');
+
+// Apply comprehensive cleanup to all content
+add_filter('the_content', 'comprehensive_html_cleanup', 99);
+add_filter('get_the_content', 'comprehensive_html_cleanup', 99);
+add_filter('the_excerpt', 'comprehensive_html_cleanup', 99);
+add_filter('the_title', 'comprehensive_html_cleanup', 99);
+
+// Apply to ACF fields as well
+add_filter('acf/load_value', function($value, $post_id, $field) {
+    if (is_string($value)) {
+        $value = comprehensive_html_cleanup($value);
+    }
+    return $value;
+}, 99, 3);
+
+add_filter('acf/format_value', function($value, $post_id, $field) {
+    if (is_string($value)) {
+        $value = comprehensive_html_cleanup($value);
+    }
+    return $value;
+}, 99, 3);
+
+// Also apply to ACF field display
+add_filter('acf_the_content', 'comprehensive_html_cleanup', 99);
+
 
 // Add theme support
 function doginvoice_theme_support() {
@@ -190,6 +172,12 @@ function register_doginvoice_rest_routes() {
     ));
 
     register_rest_route('doginvoice/v1', '/steps', array(
+        'methods' => 'GET',
+        'callback' => 'get_process_steps',
+        'permission_callback' => '__return_true'
+    ));
+
+    register_rest_route('doginvoice/v1', '/process', array(
         'methods' => 'GET',
         'callback' => 'get_process_steps',
         'permission_callback' => '__return_true'
@@ -224,58 +212,76 @@ function register_doginvoice_rest_routes() {
         'callback' => 'get_pricing_plans',
         'permission_callback' => '__return_true'
     ));
+
+    register_rest_route('doginvoice/v1', '/cta', array(
+        'methods' => 'GET',
+        'callback' => 'get_cta_data',
+        'permission_callback' => '__return_true'
+    ));
+
+    register_rest_route('doginvoice/v1', '/trusted-by', array(
+        'methods' => 'GET',
+        'callback' => 'get_trusted_by_data',
+        'permission_callback' => '__return_true'
+    ));
+
+    register_rest_route('doginvoice/v1', '/numbers', array(
+        'methods' => 'GET',
+        'callback' => 'get_animated_numbers',
+        'permission_callback' => '__return_true'
+    ));
+
+    register_rest_route('doginvoice/v1', '/form', array(
+        'methods' => 'GET',
+        'callback' => 'get_form_data',
+        'permission_callback' => '__return_true'
+    ));
+
+    register_rest_route('doginvoice/v1', '/privacy', array(
+        'methods' => 'GET',
+        'callback' => 'get_privacy_data',
+        'permission_callback' => '__return_true'
+    ));
+
+    register_rest_route('doginvoice/v1', '/terms', array(
+        'methods' => 'GET',
+        'callback' => 'get_terms_data',
+        'permission_callback' => '__return_true'
+    ));
 }
 add_action('rest_api_init', 'register_doginvoice_rest_routes');
 
 // REST API callback functions
 function get_hero_data() {
-    $hero_posts = get_posts(array(
-        'post_type' => 'doginvoice_hero',
-        'posts_per_page' => 1,
-        'post_status' => 'publish'
-    ));
-
-    if (empty($hero_posts)) {
-        return new WP_Error('no_hero', 'No hero section found', array('status' => 404));
-    }
-
-    $hero = $hero_posts[0];
-    
+    $content = get_doginvoice_content();
     return array(
-        'id' => $hero->ID,
-        'title' => get_field('hero_title', $hero->ID),
-        'subtitle' => get_field('hero_subtitle', $hero->ID),
-        'description' => get_field('hero_description', $hero->ID),
-        'video_url' => get_field('hero_video_url', $hero->ID),
-        'video_poster' => get_field('hero_video_poster', $hero->ID),
-        'cta_primary_text' => get_field('hero_cta_primary_text', $hero->ID),
-        'cta_primary_url' => get_field('hero_cta_primary_url', $hero->ID),
-        'cta_secondary_text' => get_field('hero_cta_secondary_text', $hero->ID),
-        'cta_secondary_url' => get_field('hero_cta_secondary_url', $hero->ID)
+        'title' => comprehensive_html_cleanup($content['hero_title'] ?? 'Robisz zdjęcie faktury, a reszta dzieje się automatycznie'),
+        'description' => comprehensive_html_cleanup($content['hero_description'] ?? 'DogInvoice automatycznie organizuje Twoje dokumenty, eliminuje chaos administracyjny i pozwala Ci skupić się na tym, co naprawdę ważne.'),
+        'video_url' => $content['hero_video_url'] ?? '/videos/doginvoice_hero.mp4',
+        'video_poster' => $content['hero_video_poster'] ?? '/doginvoice_hero_frame.png',
+        'cta_primary_text' => $content['hero_cta_primary_text'] ?? 'Wybierz swój plan',
+        'cta_primary_url' => $content['hero_cta_primary_url'] ?? '#pricing',
+        'cta_secondary_text' => $content['hero_cta_secondary_text'] ?? 'Przetestuj za darmo',
+        'cta_secondary_url' => $content['hero_cta_secondary_url'] ?? '/trial'
     );
 }
 
 function get_process_steps() {
-    $steps = get_posts(array(
-        'post_type' => 'process_steps',
-        'posts_per_page' => -1,
-        'post_status' => 'publish',
-        'orderby' => 'menu_order',
-        'order' => 'ASC'
-    ));
-
+    $content = get_doginvoice_content();
+    $steps = $content['process_steps'] ?? array();
     $formatted_steps = array();
+    
     foreach ($steps as $step) {
         $formatted_steps[] = array(
-            'id' => $step->ID,
-            'number' => get_field('step_number', $step->ID),
-            'title' => $step->post_title,
-            'description' => $step->post_content,
-            'icon' => get_field('step_icon', $step->ID),
-            'video_url' => get_field('step_video_url', $step->ID),
+            'number' => $step['step_number'],
+            'title' => comprehensive_html_cleanup($step['step_title']),
+            'description' => comprehensive_html_cleanup($step['step_description']),
+            'icon' => $step['step_icon'],
+            'thumbnail' => $step['step_thumbnail_url'] ?? '',
+            'video_url' => $step['step_video_url'],
             'position' => array(
-                'x' => get_field('step_position_x', $step->ID),
-                'y' => get_field('step_position_y', $step->ID)
+                'x' => $step['step_position_x'],
+                'y' => $step['step_position_y']
             )
         );
     }
@@ -284,47 +290,38 @@ function get_process_steps() {
 }
 
 function get_features() {
-    $features = get_posts(array(
-        'post_type' => 'features',
-        'posts_per_page' => -1,
-        'post_status' => 'publish',
-        'orderby' => 'menu_order',
-        'order' => 'ASC'
-    ));
-
+    $content = get_doginvoice_content();
+    $features = $content['features'] ?? array();
     $formatted_features = array();
+    
     foreach ($features as $feature) {
         $formatted_features[] = array(
-            'id' => $feature->ID,
-            'title' => $feature->post_title,
-            'description' => $feature->post_content,
-            'icon' => get_field('feature_icon', $feature->ID),
-            'video_url' => get_field('feature_video_url', $feature->ID),
-            'highlight' => get_field('feature_highlight', $feature->ID)
+            'title' => comprehensive_html_cleanup($feature['feature_title']),
+            'description' => comprehensive_html_cleanup($feature['feature_description']),
+            'icon' => $feature['feature_icon'],
+            'video' => $feature['feature_video_url'],
+            'poster' => $feature['feature_poster_url'] ?? ''
         );
     }
 
-    return $formatted_features;
+    return array(
+        'title' => comprehensive_html_cleanup($content['features_title'] ?? 'Zmień sposób zarządzania finansami'),
+        'description' => comprehensive_html_cleanup($content['features_description'] ?? 'Poznaj trzy fundamenty, które poprawią wydajność pracy księgowej.'),
+        'features' => $formatted_features
+    );
 }
 
 function get_integrations() {
-    $integrations = get_posts(array(
-        'post_type' => 'integrations',
-        'posts_per_page' => -1,
-        'post_status' => 'publish',
-        'orderby' => 'menu_order',
-        'order' => 'ASC'
-    ));
-
+    $content = get_doginvoice_content();
+    $integrations = $content['integrations'] ?? array();
     $formatted_integrations = array();
+    
     foreach ($integrations as $integration) {
         $formatted_integrations[] = array(
-            'id' => $integration->ID,
-            'name' => $integration->post_title,
-            'description' => $integration->post_content,
-            'logo' => get_field('integration_logo', $integration->ID),
-            'url' => get_field('integration_url', $integration->ID),
-            'coming_soon' => get_field('integration_coming_soon', $integration->ID)
+            'title' => comprehensive_html_cleanup($integration['integration_name']),
+            'component' => $integration['integration_component'] ?? '',
+            'height' => $integration['integration_height'] ?? 'h-[30px]',
+            'comingSoon' => $integration['integration_coming_soon'] ?? false
         );
     }
 
@@ -332,43 +329,35 @@ function get_integrations() {
 }
 
 function get_benefits() {
-    $benefits = get_posts(array(
-        'post_type' => 'benefits',
-        'posts_per_page' => -1,
-        'post_status' => 'publish',
-        'orderby' => 'menu_order',
-        'order' => 'ASC'
-    ));
-
+    $content = get_doginvoice_content();
+    $benefits = $content['benefits'] ?? array();
     $formatted_benefits = array();
+    
     foreach ($benefits as $benefit) {
         $formatted_benefits[] = array(
-            'id' => $benefit->ID,
-            'title' => $benefit->post_title,
-            'description' => $benefit->post_content,
-            'icon' => get_field('benefit_icon', $benefit->ID),
-            'highlight' => get_field('benefit_highlight', $benefit->ID)
+            'title' => comprehensive_html_cleanup($benefit['benefit_title']),
+            'description' => comprehensive_html_cleanup($benefit['benefit_description']),
+            'icon' => $benefit['benefit_icon'],
+            'highlight' => comprehensive_html_cleanup($benefit['benefit_highlight'])
         );
     }
 
-    return $formatted_benefits;
+    return array(
+        'title' => comprehensive_html_cleanup($content['benefits_title'] ?? 'Funkcjonalności automatyzujące pracę księgowości'),
+        'description' => comprehensive_html_cleanup($content['benefits_description'] ?? 'Poznaj główne zalety naszego systemu.'),
+        'items' => $formatted_benefits
+    );
 }
 
 function get_faq() {
-    $faqs = get_posts(array(
-        'post_type' => 'faq',
-        'posts_per_page' => -1,
-        'post_status' => 'publish',
-        'orderby' => 'menu_order',
-        'order' => 'ASC'
-    ));
-
+    $content = get_doginvoice_content();
+    $faqs = $content['faq'] ?? array();
     $formatted_faqs = array();
+    
     foreach ($faqs as $faq) {
         $formatted_faqs[] = array(
-            'id' => $faq->ID,
-            'question' => $faq->post_title,
-            'answer' => $faq->post_content
+            'question' => comprehensive_html_cleanup($faq['faq_question']),
+            'answer' => comprehensive_html_cleanup($faq['faq_answer'])
         );
     }
 
@@ -376,30 +365,61 @@ function get_faq() {
 }
 
 function get_pricing_plans() {
-    $plans = get_posts(array(
-        'post_type' => 'pricing_plans',
-        'posts_per_page' => -1,
-        'post_status' => 'publish',
-        'orderby' => 'menu_order',
-        'order' => 'ASC'
-    ));
-
+    $content = get_doginvoice_content();
+    $plans = $content['pricing_plans'] ?? array();
     $formatted_plans = array();
+    
     foreach ($plans as $plan) {
         $formatted_plans[] = array(
-            'id' => $plan->ID,
-            'name' => $plan->post_title,
-            'description' => $plan->post_content,
-            'price' => get_field('plan_price', $plan->ID),
-            'period' => get_field('plan_period', $plan->ID),
-            'features' => get_field('plan_features', $plan->ID),
-            'cta_text' => get_field('plan_cta_text', $plan->ID),
-            'cta_url' => get_field('plan_cta_url', $plan->ID),
-            'popular' => get_field('plan_popular', $plan->ID)
+            'name' => comprehensive_html_cleanup($plan['plan_name']),
+            'id' => $plan['plan_id'] ?? '',
+            'description' => comprehensive_html_cleanup($plan['plan_description']),
+            'invoices' => $plan['plan_invoices'] ?? '',
+            'monthlyPrice' => intval($plan['plan_monthly_price'] ?? 0),
+            'buttonText' => $plan['plan_button_text'] ?? '',
+            'buttonUrl' => $plan['plan_button_url'] ?? '',
+            'isPopular' => $plan['plan_is_popular'] ?? false
         );
     }
 
     return $formatted_plans;
+}
+
+function get_animated_numbers() {
+    $content = get_doginvoice_content();
+    return $content['animated_numbers'] ?? array();
+}
+
+function get_cta_data() {
+    $content = get_doginvoice_content();
+    return array(
+        'title' => comprehensive_html_cleanup($content['cta_title'] ?? 'Zacznij już dziś'),
+        'subtitle' => comprehensive_html_cleanup($content['cta_subtitle'] ?? 'Dołącz do firm, które oszczędzają 15 godzin tygodniowo dzięki automatyzacji.'),
+        'button_primary_text' => $content['cta_button_primary_text'] ?? 'Wybierz swój plan',
+        'button_primary_url' => $content['cta_button_primary_url'] ?? '#pricing',
+        'button_secondary_text' => $content['cta_button_secondary_text'] ?? 'Przetestuj za darmo',
+        'button_secondary_url' => $content['cta_button_secondary_url'] ?? '/trial'
+    );
+}
+
+function get_trusted_by_data() {
+    $content = get_doginvoice_content();
+    $logos = $content['trusted_by']['trusted_by_logos'] ?? array();
+    $formatted_logos = array();
+    
+    foreach ($logos as $logo) {
+        $formatted_logos[] = array(
+            'name' => $logo['logo_name'] ?? '',
+            'url' => $logo['logo_url'] ?? '',
+            'logo' => $logo['logo_path'] ?? '',
+            'height' => $logo['logo_height'] ?? 'h-[30px]'
+        );
+    }
+    
+    return array(
+        'title' => comprehensive_html_cleanup($content['trusted_by']['trusted_by_title'] ?? 'Z DogInvoice już korzystają'),
+        'logos' => $formatted_logos
+    );
 }
 
 // Helper function to get ACF field with fallback
@@ -407,4 +427,59 @@ function get_doginvoice_field($field_name, $post_id = null, $default = '') {
     $value = get_field($field_name, $post_id);
     return $value ? $value : $default;
 }
+
+function get_form_data() {
+    $content = get_doginvoice_content();
+    
+    // Pobierz plany z cennika zamiast z formularza
+    $pricing_plans = $content['pricing_plans'] ?? array();
+    $form_plans = array();
+    
+    foreach ($pricing_plans as $plan) {
+        $form_plans[] = array(
+            'id' => $plan['plan_id'] ?? '',
+            'name' => $plan['plan_name'] ?? '',
+            'monthly' => array(
+                'price' => $plan['plan_monthly_price'] ? $plan['plan_monthly_price'] . ' zł netto/mies.' : '0 zł',
+                'description' => $plan['plan_invoices'] ?? ''
+            ),
+            'yearly' => $plan['plan_monthly_price'] ? array(
+                'price' => round($plan['plan_monthly_price'] * 0.5) . ' zł netto/mies.',
+                'description' => 'Oszczędzasz ' . round($plan['plan_monthly_price'] * 6) . ' zł rocznie'
+            ) : null
+        );
+    }
+    
+    return array(
+        'title' => comprehensive_html_cleanup($content['form_title'] ?? 'Wybierz swój plan i rozpocznij test'),
+        'description' => comprehensive_html_cleanup($content['form_description'] ?? 'Wypełnij formularz, a nasz konsultant skontaktuje się z Tobą w celu finalizacji transakcji.'),
+        'webhook_url' => $content['form_webhook_url'] ?? '',
+        'industries' => $content['form_industries'] ?? array(),
+        'plans' => $form_plans
+    );
+}
+
+function get_privacy_data() {
+    $content = get_doginvoice_content();
+    return array(
+        'title' => comprehensive_html_cleanup($content['privacy_title'] ?? 'Polityka prywatności i cookies'),
+        'content' => $content['privacy_content'] ?? '',
+        'last_updated' => $content['privacy_last_updated'] ?? date('Y-m-d')
+    );
+}
+
+function get_terms_data() {
+    $content = get_doginvoice_content();
+    return array(
+        'title' => comprehensive_html_cleanup($content['terms_title'] ?? 'Regulamin'),
+        'content' => $content['terms_content'] ?? '',
+        'last_updated' => $content['terms_last_updated'] ?? date('Y-m-d')
+    );
+}
+
+
+
+
+
+
 ?>
