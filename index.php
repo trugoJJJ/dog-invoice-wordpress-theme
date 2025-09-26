@@ -46,7 +46,7 @@ get_header(); ?>
                 <p class="hero-subtitle"><?php echo esc_html($hero_subtitle); ?></p>
                 
                 <div class="hero-video">
-                    <video class="hero-video-element" autoplay muted loop playsinline preload="metadata" poster="<?php echo esc_url($hero_video_poster); ?>">
+                    <video class="hero-video-element" autoplay muted loop playsinline webkit-playsinline="true" preload="metadata" poster="<?php echo esc_url($hero_video_poster); ?>">
                         <source src="<?php echo esc_url($hero_video_url); ?>" type="video/mp4">
                         Twoja przeglądarka nie wspiera odtwarzania wideo.
                     </video>
@@ -134,7 +134,7 @@ get_header(); ?>
                     <?php endif; ?>
                     <?php if ($feature['feature_video_file'] || $feature['feature_video_url']): ?>
                     <div class="feature-video">
-                        <video controls>
+                        <video controls playsinline webkit-playsinline="true" muted preload="metadata">
                             <source src="<?php echo esc_url($feature['feature_video_file'] ?: $feature['feature_video_url']); ?>" type="video/mp4">
                         </video>
                     </div>

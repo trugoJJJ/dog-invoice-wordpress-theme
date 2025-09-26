@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScrolling();
     initProcessSteps();
     initThemeToggle();
+    initIOSVideoSupport();
 });
 
 // Video Modal Functionality
@@ -50,6 +51,43 @@ function initVideoModal() {
         if (e.key === 'Escape' && modal.classList.contains('active')) {
             closeModal();
         }
+    });
+}
+
+// iOS Video Touch Support
+function initIOSVideoSupport() {
+    const videos = document.querySelectorAll('video');
+    
+    videos.forEach(video => {
+        // Add touch support for iOS
+        video.addEventListener('touchstart', function() {
+            if (video.paused) {
+                video.play().catch(error => {
+                    console.log('Video play failed:', error);
+                });
+            }
+        });
+        
+        // Add click support as fallback
+        video.addEventListener('click', function() {
+            if (video.paused) {
+                video.play().catch(error => {
+                    console.log('Video play failed:', error);
+                });
+            } else {
+                video.pause();
+            }
+        });
+        
+        // Handle autoplay restrictions
+        video.addEventListener('canplay', function() {
+            // Try to play if muted (iOS allows muted autoplay)
+            if (video.muted && video.paused) {
+                video.play().catch(error => {
+                    console.log('Autoplay failed:', error);
+                });
+            }
+        });
     });
 }
 

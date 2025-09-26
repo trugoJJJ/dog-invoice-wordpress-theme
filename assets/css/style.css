@@ -397,6 +397,34 @@ body {
   object-fit: cover;
   border-radius: 0.5rem;
   transition: var(--transition-smooth);
+  /* iOS video fixes */
+  -webkit-playsinline: true;
+  -webkit-media-controls: false;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  /* Force hardware acceleration */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  /* Prevent iOS from showing video controls overlay */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Hero Video iOS Fixes */
+.hero-video-element {
+  /* iOS video fixes */
+  -webkit-playsinline: true;
+  -webkit-media-controls: false;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  /* Force hardware acceleration */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  /* Prevent iOS from showing video controls overlay */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* Pricing Section */
